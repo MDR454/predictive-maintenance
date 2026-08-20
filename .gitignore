@@ -1,0 +1,16 @@
+__pycache__/
+.pytest_cache/
+.coverage
+*.pyc
+.ipynb_checkpoints/
+.env
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+*.pkl
+model.pkl
+
+.config/
+sample_data/
+.ipynb_checkpoints/
