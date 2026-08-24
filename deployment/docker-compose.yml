@@ -1,0 +1,41 @@
+# Мультиконтейнерная сборка: сервис скоринга + Online Feature Store.
+# Запуск из корня проекта:  docker compose -f deployment/docker-compose.yml up --build
+
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: pdm-redis
+    # appendonly - признаки переживают перезапуск контейнера
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  api:
+    build:
+      # Контекст - корень проекта: Dockerfile копирует src/, api/ и model.pkl
+      context: ..
+      dockerfile: deployment/Dockerfile
+    container_name: pdm-api
+    environment:
+      # Внутри сети Compose хост Redis - это имя сервиса, а не localhost
+      REDIS_HOST: redis
+      REDIS_PORT: "6379"
+      MODEL_PATH: /app/model.pkl
+      DECISION_THRESHOLD: "0.24"
+    ports:
+      - "8000:8000"
+    depends_on:
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  redis-data:
