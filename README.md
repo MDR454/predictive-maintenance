@@ -1,4 +1,4 @@
-# 🏭 Predictive Maintenance MLOps System
+# 🏭 Predictive Maintenance System
 
 Система предиктивной аналитики для прогнозирования износа и аварийных поломок оборудования на основе телеметрии датчиков.
 
